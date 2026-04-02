@@ -13,7 +13,9 @@ import {
   Save, 
   RotateCcw,
   CheckCircle2,
-  Factory
+  Factory,
+  Camera, // Added Camera icon
+  Trash2 // Added Trash2 icon
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -23,8 +25,10 @@ const STORAGE_KEY = 'hnr-risk-analysis-data'
 interface FormData {
   machineName: string
   location: string
-  evaluator: string
+  serieModel: string
+  evaluationLocation: string
   date: string
+  machineImage: string | null // Added for image upload
   energies: EnergyData[]
   hazards: HazardData[]
 }
@@ -32,8 +36,10 @@ interface FormData {
 const defaultFormData: FormData = {
   machineName: '',
   location: '',
-  evaluator: '',
+  serieModel: '',
+  evaluationLocation: '',
   date: new Date().toISOString().split('T')[0],
+  machineImage: null, // Initialized to null
   energies: defaultEnergies,
   hazards: defaultHazards,
 }
@@ -42,6 +48,7 @@ export default function HNRRiskAnalysisPage() {
   const [formData, setFormData] = useState<FormData>(defaultFormData)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // New state for image preview
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -55,6 +62,15 @@ export default function HNRRiskAnalysisPage() {
       }
     }
   }, [])
+
+  // Effect to set image preview when formData.machineImage changes
+  useEffect(() => {
+    if (formData.machineImage) {
+      setImagePreview(formData.machineImage);
+    } else {
+      setImagePreview(null);
+    }
+  }, [formData.machineImage]);
 
   // Auto-save to localStorage
   const saveToLocalStorage = useCallback(() => {
@@ -80,6 +96,32 @@ export default function HNRRiskAnalysisPage() {
     }
   }
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setFormData(prev => ({ ...prev, machineImage: base64String }));
+        setImagePreview(base64String);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData(prev => ({ ...prev, machineImage: null }));
+      setImagePreview(null);
+    }
+  };
+
+  const handleClearImage = () => {
+    setFormData(prev => ({ ...prev, machineImage: null }));
+    setImagePreview(null);
+    // Optionally, reset the file input value if needed
+    const fileInput = document.getElementById('machine-image-upload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
+
   // Count active energies
   const activeEnergiesCount = formData.energies.filter(e => e.present).length
   
@@ -99,7 +141,7 @@ export default function HNRRiskAnalysisPage() {
                 <Shield className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-foreground">Análisis HNR</h1>
+                <h1 className="text-lg font-bold text-foreground">Análisis HRN</h1>
                 <p className="text-xs text-muted-foreground">Evaluación de Riesgos</p>
               </div>
             </div>
@@ -144,13 +186,24 @@ export default function HNRRiskAnalysisPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="machine-name" className="text-sm font-medium">
-                  Nombre de la Máquina
+                  Máquina, Herramienta y/o Equipo
                 </Label>
                 <Input
                   id="machine-name"
-                  placeholder="ej. Prensa Hidráulica PH-200"
+                  placeholder=""
                   value={formData.machineName}
                   onChange={(e) => setFormData({ ...formData, machineName: e.target.value })}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="serie-model" className="text-sm font-medium">
+                  Número de Serie y/o Modelo
+                </Label>
+                <Input
+                  id="serie-model"
+                  placeholder=""
+                  value={formData.serieModel}
+                  onChange={(e) => setFormData({ ...formData, serieModel: e.target.value })}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -158,21 +211,21 @@ export default function HNRRiskAnalysisPage() {
                   Ubicación
                 </Label>
                 <Input
-                  id="location"
-                  placeholder="ej. Nave 2, Línea A"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    id="location"
+                    placeholder=""
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="evaluator" className="text-sm font-medium">
-                  Evaluador
+                <Label htmlFor="evaluation-location" className="text-sm font-medium">
+                  Lugar de Evaluación
                 </Label>
                 <Input
-                  id="evaluator"
-                  placeholder="Nombre del evaluador"
-                  value={formData.evaluator}
-                  onChange={(e) => setFormData({ ...formData, evaluator: e.target.value })}
+                    id="evaluation-location"
+                    placeholder=""
+                    value={formData.evaluationLocation}
+                    onChange={(e) => setFormData({ ...formData, evaluationLocation: e.target.value })}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -190,6 +243,51 @@ export default function HNRRiskAnalysisPage() {
           </div>
         </section>
 
+        {/* Image Upload Section */}
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Camera className="h-5 w-5 text-primary" />
+            <h2 className="text-base font-semibold text-foreground">
+              Imagen de la Máquina
+            </h2>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="grid gap-4">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="machine-image-upload" className="text-sm font-medium">
+                  Subir Imagen
+                </Label>
+                <Input
+                  id="machine-image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground file:border-none file:rounded-md file:px-3 file:py-1.5 file:mr-2 hover:file:bg-primary/90"
+                />
+              </div>
+
+              {imagePreview && (
+                <div className="relative w-full h-48 rounded-md overflow-hidden border border-border flex items-center justify-center bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={imagePreview}
+                    alt="Vista previa de la máquina"
+                    className="object-contain max-h-full max-w-full"
+                  />
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 h-8 w-8"
+                    onClick={handleClearImage}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* Section 1: Energy Cards */}
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -200,20 +298,20 @@ export default function HNRRiskAnalysisPage() {
               </h2>
             </div>
             {activeEnergiesCount > 0 && (
-              <Badge variant="secondary" className="bg-warning/20 text-warning-foreground">
-                {activeEnergiesCount} activa{activeEnergiesCount !== 1 ? 's' : ''}
-              </Badge>
+                <Badge variant="secondary" className="bg-warning/20 text-warning-foreground">
+                  {activeEnergiesCount} activa{activeEnergiesCount !== 1 ? 's' : ''}
+                </Badge>
             )}
           </div>
-          
+
           <p className="text-sm text-muted-foreground mb-4">
-            Identifique las energías presentes en la máquina o equipo. 
+            Identifique las energías presentes en la máquina o equipo.
             Active el interruptor si la energía está presente.
           </p>
-          
+
           <EnergyCardsList
-            energies={formData.energies}
-            onChange={(energies) => setFormData({ ...formData, energies })}
+              energies={formData.energies}
+              onChange={(energies) => setFormData({ ...formData, energies })}
           />
         </section>
 
@@ -228,27 +326,27 @@ export default function HNRRiskAnalysisPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground">HNR Total:</span>
-              <Badge 
-                className={cn(
-                  'px-3 py-1 font-semibold',
-                  totalHNR >= 50 ? 'bg-risk-high text-white' :
-                  totalHNR >= 20 ? 'bg-risk-medium text-warning-foreground' :
-                  totalHNR >= 10 ? 'bg-risk-low text-white' :
-                  'bg-risk-very-low text-white'
-                )}
+              <Badge
+                  className={cn(
+                      'px-3 py-1 font-semibold',
+                      totalHNR >= 50 ? 'bg-risk-high text-white' :
+                          totalHNR >= 20 ? 'bg-risk-medium text-warning-foreground' :
+                              totalHNR >= 10 ? 'bg-risk-low text-white' :
+                                  'bg-risk-very-low text-white'
+                  )}
               >
                 {totalHNR.toFixed(0)}
               </Badge>
             </div>
           </div>
-          
+
           <p className="text-sm text-muted-foreground mb-4">
             Expanda cada tipo de peligro para completar la evaluación HNR (Hazard Rating Number).
           </p>
-          
+
           <HazardAccordionList
-            hazards={formData.hazards}
-            onChange={(hazards) => setFormData({ ...formData, hazards })}
+              hazards={formData.hazards}
+              onChange={(hazards) => setFormData({ ...formData, hazards })}
           />
         </section>
 
@@ -257,7 +355,7 @@ export default function HNRRiskAnalysisPage() {
           <h3 className="text-sm font-semibold text-foreground mb-4">
             Resumen de la Evaluación
           </h3>
-          
+
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-lg bg-card p-4 border border-border">
               <span className="text-xs text-muted-foreground block mb-1">Máquina</span>
@@ -274,11 +372,11 @@ export default function HNRRiskAnalysisPage() {
             <div className="rounded-lg bg-card p-4 border border-border">
               <span className="text-xs text-muted-foreground block mb-1">HNR Total</span>
               <span className={cn(
-                'text-lg font-bold',
-                totalHNR >= 50 ? 'text-risk-high' :
-                totalHNR >= 20 ? 'text-warning' :
-                totalHNR >= 10 ? 'text-risk-low' :
-                'text-risk-very-low'
+                  'text-lg font-bold',
+                  totalHNR >= 50 ? 'text-risk-high' :
+                      totalHNR >= 20 ? 'text-warning' :
+                          totalHNR >= 10 ? 'text-risk-low' :
+                              'text-risk-very-low'
               )}>
                 {totalHNR.toFixed(1)}
               </span>
@@ -288,19 +386,23 @@ export default function HNRRiskAnalysisPage() {
           <div className="mt-4 flex flex-col gap-2 text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded bg-risk-high" />
-              <span>Alto (≥50): Acción inmediata requerida</span>
+              <span>Muy Alto ({'>'}500): Instalación de medidas de mitigación de riesgo urgentes</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="h-3 w-3 rounded bg-risk-high" />
+              <span>Alto (51-500): Importante dar prioridad a instalación de medidas.</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded bg-risk-medium" />
-              <span>Medio (20-49): Atención prioritaria</span>
+              <span>Medio (21-50): Deben considerarse medidas de mitigación del riesgo.</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded bg-risk-low" />
-              <span>Bajo (10-19): Mejora programada</span>
+              <span>Bajo (6-20): Medidas administrativas, señalización y EPP suficientes.</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded bg-risk-very-low" />
-              <span>Muy Bajo ({'<'}10): Monitoreo continuo</span>
+              <span>Muy Bajo (0-5): No son necesarias medias adicionales a las actuales.</span>
             </div>
           </div>
         </section>
