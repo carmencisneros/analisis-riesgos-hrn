@@ -196,3 +196,6 @@ export const defaultEnergies: EnergyData[] = [
   { type: 'thermal', present: false, requiresLockout: false, residualEnergy: null },
   { type: 'residual', present: false, requiresLockout: false, residualEnergy: null },
 ]
+export function getEnergyLabel(type: EnergyType): string {
+  return energyConfig[type]?.labelEs || type;
+}

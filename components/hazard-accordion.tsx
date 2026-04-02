@@ -349,3 +349,6 @@ export const defaultHazards: HazardData[] = [
   { type: 'noise', origin: '', frequency: 5, severity: 0.5, numberOfPersons: 1, probability: 8, action: '' },
   { type: 'vibration', origin: '', frequency: 4, severity: 0.5, numberOfPersons: 1, probability: 2, action: '' },
 ]
+export function getHazardLabel(type: HazardType): string {
+  return hazardConfig[type]?.labelEs || type;
+}
