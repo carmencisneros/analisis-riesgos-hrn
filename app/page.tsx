@@ -1,5 +1,5 @@
 'use client'
-
+import { DownloadPdfButton } from '@/components/download-pdf-button'
 import { useState, useEffect, useCallback } from 'react'
 import { EnergyCardsList, defaultEnergies, type EnergyData } from '@/components/energy-card'
 import { HazardAccordionList, defaultHazards, type HazardData } from '@/components/hazard-accordion'
@@ -158,6 +158,7 @@ export default function HNRRiskAnalysisPage() {
                   </span>
                 </div>
               )}
+              <DownloadPdfButton formData={formData} totalHNR={totalHNR} />
               <Button 
                 variant="outline" 
                 size="sm" 
