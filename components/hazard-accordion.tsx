@@ -360,11 +360,11 @@ export function HazardAccordionList({ hazards, onChange }: HazardAccordionProps)
 
 // Default initial state
 export const defaultHazards: HazardData[] = [
-  { type: 'mechanical', origin: '', frequency: 5, severity: 4, numberOfPersons: 1, probability: 1, action: '' },
-  { type: 'electrical', origin: '', frequency: 5, severity: 0.1, numberOfPersons: 1, probability: 2, action: '' },
-  { type: 'thermal', origin: '', frequency: 5, severity: 0.5, numberOfPersons: 1, probability: 2, action: '' },
-  { type: 'noise', origin: '', frequency: 5, severity: 0.5, numberOfPersons: 1, probability: 8, action: '' },
-  { type: 'vibration', origin: '', frequency: 4, severity: 0.5, numberOfPersons: 1, probability: 2, action: '' },
+  { type: 'mechanical', origin: '', frequency: null, severity: null, numberOfPersons: null, probability: null, frequencyLabel: '', severityLabel: '', personsLabel: '', probabilityLabel: '', action: '' },
+  { type: 'electrical', origin: '', frequency: null, severity: null, numberOfPersons: null, probability: null, frequencyLabel: '', severityLabel: '', personsLabel: '', probabilityLabel: '', action: '' },
+  { type: 'thermal', origin: '', frequency: null, severity: null, numberOfPersons: null, probability: null, frequencyLabel: '', severityLabel: '', personsLabel: '', probabilityLabel: '', action: '' },
+  { type: 'noise', origin: '', frequency: null, severity: null, numberOfPersons: null, probability: null, frequencyLabel: '', severityLabel: '', personsLabel: '', probabilityLabel: '', action: '' },
+  { type: 'vibration', origin: '', frequency: null, severity: null, numberOfPersons: null, probability: null, frequencyLabel: '', severityLabel: '', personsLabel: '', probabilityLabel: '', action: '' },
 ]
 export function getHazardLabel(type: HazardType): string {
   return hazardConfig[type]?.labelEs || type;
