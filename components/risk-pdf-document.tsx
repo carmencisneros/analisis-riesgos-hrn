@@ -286,7 +286,7 @@ const EnergySection = ({ energies }: { energies: any[] }) => {
                         <View style={styles.iconBox}>
                             <Image
                                 src={`/icons/${energy.type}.png`}
-                                style={{ width: 25, height: 25 }}
+                                style={{ width: 35, height: 35 }}
                             />
                         </View>
 
