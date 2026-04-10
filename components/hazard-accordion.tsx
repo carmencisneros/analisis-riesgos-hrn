@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Cog,
   Zap,
@@ -133,6 +134,43 @@ const probabilityOptions = [
   { value: 15, label: 'Muy probable', description: '>90%' },
 ]
 
+const originOptionsByHazard: Record<HazardType, string[]> = {
+  mechanical: [
+    "No Identificado",
+    "Partes en Movimiento",
+    "Caída de elementos",
+    "Bordes afilados",
+    "Aplastamiento"
+  ],
+  electrical: [
+    "Arco eléctrico",
+    "Cables expuestos",
+    "Mal aislamiento",
+    "Sobrecarga",
+    "Contacto directo",
+    "Cortocircuito"
+  ],
+  thermal: [
+    "Explosión",
+    "Flama",
+    "Temperaturas extremas",
+    "Calentamiento por operación"
+  ],
+  noise: [
+    "Fenómeno de cavitación",
+    "Raspado de superficies",
+    "Partes móviles",
+    "Piezas giratorias"
+  ],
+  vibration: [
+    "Fenómeno de cavitación",
+    "Raspado de superficies",
+    "Piezas desalineadas",
+    "Equipos vibratorios",
+    "Maquinas defectuosas"
+  ]
+};
+
 interface SegmentedControlProps {
   options: { value: number; label: string; description: string }[]
   value: number
@@ -194,20 +232,30 @@ function HazardForm({ data, onChange }: HazardFormProps) {
       [labelField]: selectedOption?.label || ''
     });
   };
+  const currentOriginOptions = originOptionsByHazard[data.type] || ["No Identificado"];
   return (
     <div className="flex flex-col gap-6 pt-2">
-      {/* Origin Field */}
+      {/* Origin Field - Ahora como Select */}
       <div className="flex flex-col gap-2">
         <Label htmlFor={`origin-${data.type}`} className="text-sm font-medium">
           Origen del Peligro
         </Label>
-        <Input
-          id={`origin-${data.type}`}
-          placeholder="ej. Bordes afilados, Contacto directo..."
-          value={data.origin}
-          onChange={(e) => onChange({ ...data, origin: e.target.value })}
-          className="bg-card"
-        />
+
+        <Select
+            value={data.origin}
+            onValueChange={(value) => onChange({ ...data, origin: value })}
+        >
+          <SelectTrigger id={`origin-${data.type}`} className="bg-card w-full">
+            <SelectValue placeholder="Seleccione el origen del riesgo..." />
+          </SelectTrigger>
+          <SelectContent>
+            {currentOriginOptions.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* HNR Parameters */}
