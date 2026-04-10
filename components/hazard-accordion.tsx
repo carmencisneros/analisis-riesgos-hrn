@@ -35,6 +35,10 @@ export interface HazardData {
   severity: number
   numberOfPersons: number
   probability: number
+  frequencyLabel?: string
+  severityLabel?: string
+  personsLabel?: string
+  probabilityLabel?: string
   action: string
 }
 
@@ -176,7 +180,20 @@ interface HazardFormProps {
 function HazardForm({ data, onChange }: HazardFormProps) {
   const hnr = useMemo(() => calculateHNR(data), [data])
   const riskLevel = useMemo(() => getRiskLevel(hnr), [hnr])
-
+// Función para capturar tanto el valor como el texto
+  const handleParamChange = (
+      field: keyof HazardData,
+      labelField: keyof HazardData,
+      value: number,
+      options: { value: number; label: string }[]
+  ) => {
+    const selectedOption = options.find(o => o.value === value);
+    onChange({
+      ...data,
+      [field]: value,
+      [labelField]: selectedOption?.label || ''
+    });
+  };
   return (
     <div className="flex flex-col gap-6 pt-2">
       {/* Origin Field */}
@@ -198,31 +215,31 @@ function HazardForm({ data, onChange }: HazardFormProps) {
         <h4 className="text-sm font-semibold text-foreground">Parámetros HNR</h4>
 
         <SegmentedControl
-          label="Frecuencia de Exposición"
-          options={frequencyOptions}
-          value={data.frequency}
-          onChange={(value) => onChange({ ...data, frequency: value })}
+            label="Frecuencia de Exposición"
+            options={frequencyOptions}
+            value={data.frequency}
+            onChange={(val) => handleParamChange('frequency', 'frequencyLabel', val, frequencyOptions)}
         />
 
         <SegmentedControl
-          label="Severidad de la Lesión"
-          options={severityOptions}
-          value={data.severity}
-          onChange={(value) => onChange({ ...data, severity: value })}
+            label="Severidad de la Lesión"
+            options={severityOptions}
+            value={data.severity}
+            onChange={(val) => handleParamChange('severity', 'severityLabel', val, severityOptions)}
         />
 
         <SegmentedControl
-          label="Número de Personas Expuestas"
-          options={personsOptions}
-          value={data.numberOfPersons}
-          onChange={(value) => onChange({ ...data, numberOfPersons: value })}
+            label="Número de Personas"
+            options={personsOptions}
+            value={data.numberOfPersons}
+            onChange={(val) => handleParamChange('numberOfPersons', 'personsLabel', val, personsOptions)}
         />
 
         <SegmentedControl
-          label="Probabilidad de Ocurrencia"
-          options={probabilityOptions}
-          value={data.probability}
-          onChange={(value) => onChange({ ...data, probability: value })}
+            label="Probabilidad"
+            options={probabilityOptions}
+            value={data.probability}
+            onChange={(val) => handleParamChange('probability', 'probabilityLabel', val, probabilityOptions)}
         />
       </div>
 

@@ -1,94 +1,15 @@
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { getHazardLabel } from '@/components/hazard-accordion';
 import { getEnergyLabel } from '@/components/energy-card';
+
 const styles = StyleSheet.create({
     page: {
-        // Aplicamos los márgenes "Estrecho"
         paddingTop: 54,
         paddingBottom: 54,
         paddingLeft: 18,
         paddingRight: 18,
         backgroundColor: '#FFFFFF',
         fontFamily: 'Helvetica',
-    },
-    header: {
-        position: 'absolute',
-        top: 22,
-        left: 18,
-        right: 18,
-        fontSize: 10,
-    },
-    footer: {
-        position: 'absolute',
-        bottom: 22,
-        left: 18,
-        right: 18,
-        fontSize: 10,
-        textAlign: 'center',
-    },
-    //page: { padding: 40, fontSize: 10, fontFamily: 'Helvetica' },
-    //header: { marginBottom: 20, borderBottom: 1, pb: 10 },
-    title: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
-    subtitle: { fontSize: 10, color: '#666' },
-    section: { marginTop: 15, padding: 10, backgroundColor: '#f9fafb', borderRadius: 4 },
-    sectionTitle: { fontSize: 12, fontWeight: 'bold', marginBottom: 8, borderBottom: 0.5, borderColor: '#e5e7eb' },
-    grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-    field: { width: '45%', marginBottom: 5 },
-    label: { color: '#6b7280', fontSize: 8 },
-    value: { fontSize: 10, fontWeight: 'medium' },
-    image: {
-        maxWidth: 400,        // Limita el ancho máximo
-        height: 'auto',       // Permite que la altura se ajuste proporcionalmente
-        marginTop: 5,         // Reducimos el margen superior
-        alignSelf: 'center',  // Centra la imagen
-    },
-    imageContainer: {
-        marginTop: 5,
-        marginBottom: 5,
-        alignItems: 'center', // Centra el contenido
-    },
-    badge: { padding: 4, borderRadius: 4, color: 'white', marginTop: 5, textAlign: 'center', width: 60 },
-    table: {
-        width: '100%',
-        borderWidth: 0.5,
-        borderColor: '#4b5563',
-    },
-    headerRow: {
-        flexDirection: 'row',
-        backgroundColor: '#004a7c',
-        color: '#fff',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        fontSize: 6,
-    },
-    row: {
-        flexDirection: 'row',
-        borderBottomWidth: 0.5,
-        borderColor: '#4b5563',
-        minHeight: 35,
-    },
-    cell: {
-        borderRightWidth: 0.5,
-        borderColor: '#4b5563',
-        padding: 4,
-        //justifyContent: 'center',
-        //alignItems: 'center',
-        fontSize: 6,
-
-        // ESTO CENTRA EL TEXTO:
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-    },
-    // Colores de riesgo según tu imagen
-    riskMedio: { backgroundColor: '#ffff00' },
-    riskBajo: { backgroundColor: '#00b050', color: '#fff' },
-    infoTable: {
-        width: '100%',
-        borderWidth: 0.5,
-        borderColor: '#000',
-        marginBottom: 10,
     },
     headerBlue: {
         backgroundColor: '#004a7c',
@@ -100,6 +21,13 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.5,
         borderColor: '#000',
     },
+    // --- ESTILOS INFO MÁQUINA ---
+    infoTable: {
+        width: '100%',
+        borderWidth: 0.5,
+        borderColor: '#000',
+        marginBottom: 5,
+    },
     infoRow: {
         flexDirection: 'row',
         borderBottomWidth: 0.5,
@@ -109,24 +37,33 @@ const styles = StyleSheet.create({
         padding: 4,
         borderRightWidth: 0.5,
         borderColor: '#000',
-        flexDirection: 'row', // Para poner etiqueta y valor en la misma línea
+        flexDirection: 'row',
         fontSize: 8,
     },
-    label: {
-        fontWeight: 'bold',
-        marginRight: 4,
+    label: { fontWeight: 'bold', marginRight: 4 },
+    value: { flex: 1 },
+
+    // --- ESTILOS IMAGEN ---
+    imageContainer: {
+        marginTop: 5,
+        marginBottom: 5,
+        alignItems: 'center',
     },
-    value: {
-        flex: 1,
+    image: {
+        maxWidth: 400,
+        height: 'auto',
+        alignSelf: 'center',
     },
+
+    // --- ESTILOS TABLA ENERGÍAS (DISEÑO DOBLE COLUMNA) ---
     energyTable: {
         width: '100%',
         borderWidth: 0.5,
         borderColor: '#000',
-        marginTop: 10,
+        marginTop: 5,
     },
-    energyColumn: {
-        width: '16.66%', // 100% dividido entre 6 tipos de energía
+    energyBlock: {
+        width: '16.66%',
         borderRightWidth: 0.5,
         borderColor: '#000',
     },
@@ -138,51 +75,148 @@ const styles = StyleSheet.create({
         padding: 2,
         borderBottomWidth: 0.5,
     },
-    iconBox: {
-        height: 40,
+    contentRow: { flexDirection: 'row', height: 45 },
+    iconColumn: {
+        width: '50%',
         justifyContent: 'center',
         alignItems: 'center',
+        borderRightWidth: 0.5,
+        borderBottomWidth: 0.5,
+        borderColor: '#000',
+    },
+    statusColumn: { width: '50%' },
+    statusHeader: {
+        backgroundColor: '#004a7c',
+        color: 'white',
+        fontSize: 5,
+        textAlign: 'center',
+        padding: 1,
         borderBottomWidth: 0.5,
     },
-    yesNoRow: {
+    optionRow: {
         flexDirection: 'row',
-        height: 15,
+        flex: 1,
         borderBottomWidth: 0.5,
+        borderColor: '#000',
         alignItems: 'center',
     },
-    yesNoLabel: {
+    optionText: {
         width: '60%',
         fontSize: 7,
-        paddingLeft: 4,
+        textAlign: 'center',
         borderRightWidth: 0.5,
-    },
-    dotContainer: {
-        width: '40%',
-        alignItems: 'center',
+        borderColor: '#000',
+        height: '100%',
         justifyContent: 'center',
+        display: 'flex',
+        paddingTop: 2,
     },
-    greenDot: {
-        width: 6,
-        height: 6,
-        backgroundColor: '#22c55e',
-        borderRadius: 3,
+    dotBox: { width: '40%', justifyContent: 'center', alignItems: 'center' },
+    greenDot: { width: 6, height: 6, backgroundColor: '#22c55e', borderRadius: 3 },
+    footerRow: { flexDirection: 'row', height: 12, alignItems: 'center' },
+    footerLabel: { width: '80%', fontSize: 6, paddingLeft: 3, borderRightWidth: 0.5, borderColor: '#000' },
+    footerValue: { width: '20%', fontSize: 7, textAlign: 'center', fontWeight: 'bold' },
+
+    // --- ESTILOS TABLA RIESGOS ---
+    table: {
+        width: '100%',
+        borderWidth: 0.5,
+        borderColor: '#000',
+        marginTop: 5,
     },
-    lockRow: {
+    headerRow: {
         flexDirection: 'row',
-        fontSize: 7,
+        backgroundColor: '#004a7c',
+        minHeight: 20,
+        alignItems: 'center',
+    },
+    row: {
+        flexDirection: 'row',
+        borderBottomWidth: 0.5,
+        borderColor: '#000',
+        minHeight: 50, // Aumentamos la altura para las subdivisiones
+    },
+    cell: {
+        borderRightWidth: 0.5,
+        borderColor: '#000',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        display: 'flex',
+    },
+    // Celda con subdivisiones internas (Frec, Sev, Pers, Prob)
+    splitCell: {
+        width: '10%',
+        borderRightWidth: 0.5,
+        borderColor: '#000',
+        flexDirection: 'column',
+    },
+    upperPart: {
+        flex: 1,
+        justifyContent: 'center',
         padding: 2,
-        justifyContent: 'space-between',
-    }
+        fontSize: 6,
+    },
+    lowerPart: {
+        flexDirection: 'row',
+        borderTopWidth: 0.5,
+        borderColor: '#000',
+        height: 12,
+    },
+    lowerLabel: {
+        width: '50%',
+        fontSize: 5,
+        backgroundColor: '#f3f4f6',
+        borderRightWidth: 0.5,
+        borderColor: '#000',
+        textAlign: 'center',
+        paddingTop: 2,
+    },
+    lowerValue: {
+        width: '50%',
+        fontSize: 6,
+        textAlign: 'center',
+        paddingTop: 2,
+        fontWeight: 'bold',
+    },
+    hazardIcon: {
+        width: 32,
+        height: 32,
+        marginBottom: 0,
+    },
+    imageCell: {
+        width: '12%',             // Mantener el ancho porcentual que definimos
+        borderRightWidth: 0.5,
+        borderColor: '#4b5563',
+        padding: 0,                // ELIMINAR PADDING DE LA CELDA
+
+        // Flexbox para centrado total:
+        display: 'flex',
+        justifyContent: 'center',  // Centrado Vertical
+        alignItems: 'center',      // Centrado Horizontal
+        textAlign: 'center',
+
+        // Asegúrate de que la fila contenedora (.row) tenga minHeight suficiente
+    },
+
+    // Estilo para la imagen misma
+    hazardImage: {
+        width: 35,                 // Tamaño exacto solicitado
+        height: 35,                // Tamaño exacto solicitado
+        margin: 0,                 // ELIMINAR MÁRGENES
+        alignSelf: 'center',       // Refuerzo de centrado horizontal
+    },
 });
+
 const getRiskColor = (hnr: number) => {
-    if (hnr > 1000) return '#7f1d1d';     // Inaceptable (Rojo muy oscuro)
-    if (hnr > 500) return '#b91c1c';      // Extremo (Rojo oscuro)
-    if (hnr > 50) return '#ef4444';       // Muy alto (Rojo)
-    if (hnr > 20) return '#f97316';       // Alto (Naranja)
-    if (hnr > 10) return '#fdfd00';       // Medio (Amarillo)
-    if (hnr > 5) return '#00af4f';        // Bajo (Verde)
-    if (hnr > 1) return '#00af4f';        // Muy bajo (Verde claro)
-    return '#00af4f';                     // Despreciable (Gris muy claro)
+    if (hnr > 1000) return '#7f1d1d';
+    if (hnr > 500) return '#b91c1c';
+    if (hnr > 50) return '#ef4444';
+    if (hnr > 20) return '#f97316';
+    if (hnr > 10) return '#fdfd00';
+    if (hnr > 5) return '#00af4f';
+    if (hnr > 1) return '#00af4f';
+    return '#00af4f';
 };
 
 const getRiskText = (hnr: number) => {
@@ -195,175 +229,162 @@ const getRiskText = (hnr: number) => {
     if (hnr > 1) return 'Muy bajo';
     return 'Despreciable';
 };
-const HazardTable = ({ hazards }: { hazards: any[] }) => {
-    console.log('Hazards:', hazards)
-    // VALIDACIÓN EXTRA: Si no es un arreglo o está vacío, mostramos una fila de error limpia
-    if (!hazards || !Array.isArray(hazards) || hazards.length === 0) {
-        return (
-            <View style={styles.table}>
-                <View style={styles.row}>
-                    <Text style={[styles.cell, { width: '100%' }]}>
-                        No hay datos de peligros disponibles para generar la tabla.
-                    </Text>
+
+const EnergySection = ({ energies }: { energies: any[] }) => (
+    <View style={styles.energyTable}>
+        <Text style={[styles.headerBlue, { fontSize: 8 }]}>
+            Energías Presentes en la Máquina, Herramienta y/o Equipo:
+        </Text>
+        <View style={{ flexDirection: 'row' }}>
+            {energies.map((energy, index) => (
+                <View key={index} style={[styles.energyBlock, index === energies.length - 1 ? {} : {}]}>
+                    <Text style={styles.energyHeader}>{getEnergyLabel(energy.type)}</Text>
+                    <View style={styles.contentRow}>
+                        <View style={styles.iconColumn}>
+                            <Image src={`/icons/${energy.type}.png`} style={{ width: 35, height: 35 }} />
+                        </View>
+                        <View style={styles.statusColumn}>
+                            <Text style={styles.statusHeader}>Energía presente</Text>
+                            <View style={styles.optionRow}>
+                                <Text style={styles.optionText}>Si</Text>
+                                <View style={styles.dotBox}>{energy.present && <View style={styles.greenDot} />}</View>
+                            </View>
+                            <View style={[styles.optionRow]}>
+                                <Text style={styles.optionText}>No</Text>
+                                <View style={styles.dotBox}>{!energy.present && <View style={styles.greenDot} />}</View>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.footerRow}>
+                        <Text style={styles.footerLabel}>Requiere bloqueo</Text>
+                        <Text style={styles.footerValue}>{energy.requiresLockout ? 'S' : 'N'}</Text>
+                    </View>
                 </View>
-            </View>
-        );
+            ))}
+        </View>
+    </View>
+);
+
+const HazardTable = ({ hazards }: { hazards: any[] }) => {
+    if (!hazards || !Array.isArray(hazards) || hazards.length === 0) {
+        return <View style={styles.table}><Text>No hay datos.</Text></View>;
     }
 
     return (
         <View style={styles.table}>
-            {/* Encabezado azul oscuro */}
-            <View style={[styles.row, { backgroundColor: '#004a7c' }]}>
-                <Text style={[styles.cell, { width: '15%', color: 'white' }]}>Tipo</Text>
-                <Text style={[styles.cell, { width: '15%', color: 'white' }]}>Origen</Text>
-                <Text style={[styles.cell, { width: '10%', color: 'white' }]}>Frecuencia</Text>
-                <Text style={[styles.cell, { width: '10%', color: 'white' }]}>Severidad</Text>
-                <Text style={[styles.cell, { width: '10%', color: 'white' }]}>No Personas</Text>
-                <Text style={[styles.cell, { width: '10%', color: 'white' }]}>Probabilidad</Text>
-                <Text style={[styles.cell, { width: '10%', color: 'white' }]}>HRN</Text>
-                <Text style={[styles.cell, { width: '20%', color: 'white' }]}>Riesgo</Text>
-                <Text style={[styles.cell, { width: '40%', color: 'white' }]}>Acción</Text>
+            {/* Título de la sección */}
+            <View style={{ backgroundColor: '#004a7c', padding: 2 }}>
+                <Text style={{ color: 'white', fontSize: 8, textAlign: 'center', fontWeight: 'bold' }}>
+                    Identificación de Peligros y Evaluación de Riesgos
+                </Text>
             </View>
 
-            {/* Filas Dinámicas */}
+            {/* Encabezado de columnas */}
+            <View style={styles.headerRow}>
+                <Text style={[styles.cell, { width: '12%', color: 'white', fontSize: 7 }]}>Tipo</Text>
+                <Text style={[styles.cell, { width: '13%', color: 'white', fontSize: 7 }]}>Origen</Text>
+                <Text style={[styles.cell, { width: '10%', color: 'white', fontSize: 7 }]}>Frecuencia</Text>
+                <Text style={[styles.cell, { width: '10%', color: 'white', fontSize: 7 }]}>Severidad</Text>
+                <Text style={[styles.cell, { width: '10%', color: 'white', fontSize: 7 }]}>No Personas</Text>
+                <Text style={[styles.cell, { width: '10%', color: 'white', fontSize: 7 }]}>Probabilidad</Text>
+                <Text style={[styles.cell, { width: '8%', color: 'white', fontSize: 7 }]}>HNR</Text>
+                <Text style={[styles.cell, { width: '12%', color: 'white', fontSize: 7 }]}>Riesgo</Text>
+                <Text style={[styles.cell, { width: '15%', color: 'white', fontSize: 7, borderRightWidth: 0 }]}>Acción</Text>
+            </View>
+
             {hazards.map((hazard, index) => {
-                // Cálculo basado en las 4 variables que manejas en tu formulario
-                const hnrValue =
-                    (Number(hazard.frequency) || 0) * (Number(hazard.severity) || 0) * (Number(hazard.numberOfPersons) || 0) * (Number(hazard.probability) || 0);
+                const hnrValue = (Number(hazard.frequency) || 0) * (Number(hazard.severity) || 0) * (Number(hazard.numberOfPersons) || 0) * (Number(hazard.probability) || 0);
+
                 return (
                     <View key={index} style={styles.row}>
-                        <Text style={[styles.cell, { width: '15%' }]}>
-                            {/* USAMOS LA FUNCIÓN AQUÍ */}
-                            {getHazardLabel(hazard.type)}
-                        </Text>
-                        <Text style={[styles.cell, { width: '15%' }]}>{hazard.origin || '-'}</Text>
-                        <Text style={[styles.cell, { width: '10%' }]}>{hazard.frequency}</Text>
-                        <Text style={[styles.cell, { width: '10%' }]}>{hazard.severity}</Text>
-                        <Text style={[styles.cell, { width: '10%' }]}>{hazard.numberOfPersons}</Text>
-                        <Text style={[styles.cell, { width: '10%' }]}>{hazard.probability}</Text>
-                        <Text style={[styles.cell, { width: '10%' }]}>{hnrValue.toFixed(0)}</Text>
+                        {/* Columna Tipo (Icono + Título Azul) - CORREGIDA */}
+                        <View style={[styles.cell, { width: '12%', padding: 0, justifyContent: 'flex-start' }]}>
+                            {/* Título Azul: Ahora es parte del flujo, no absoluto */}
+                            <View style={{ backgroundColor: '#004a7c', width: '100%', padding: 2, marginBottom: 'auto' }}>
+                                <Text style={{ color: 'white', fontSize: 6, textAlign: 'center', fontWeight: 'bold' }}>
+                                    {getHazardLabel(hazard.type)}
+                                </Text>
+                            </View>
 
-                        <View style={[
-                            styles.cell,
-                            {
-                                width: '20%',
-                                backgroundColor: getRiskColor(hnrValue),
-                            }
-                        ]}>
-                            <Text style={{
-                                fontWeight: 'bold',
-                                fontSize: 7,
-                                color: hnrValue > 5 && hnrValue <= 50 ? 'black' : 'white'
-                            }}>
+                            {/* Contenedor de Imagen: Se encarga de centrar el icono en el espacio restante */}
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', paddingTop: 2, paddingBottom: 2 }}>
+                                <Image
+                                    src={`/icons/${hazard.type}.png`}
+                                    style={{ width: 35, height: 35 }}
+                                />
+                            </View>
+                        </View>
+
+                        {/* Columna Origen */}
+                        <View style={[styles.cell, { width: '13%', padding: 2 }]}>
+                            <Text style={{ fontSize: 7 }}>{hazard.origin || '-'}</Text>
+                        </View>
+
+                        {/* Celdas Divididas (Frec, Sev, Pers, Prob) */}
+                        {[
+                            { val: hazard.frequency, text: hazard.frequencyLabel, label: 'Frecuencia' },
+                            { val: hazard.severity, text: hazard.severityLabel, label: 'Severidad' },
+                            { val: hazard.numberOfPersons, text: hazard.personsLabel, label: 'Personas' },
+                            { val: hazard.probability, text: hazard.probabilityLabel, label: 'Probabilidad' }
+                        ].map((param, i) => (
+                            <View key={i} style={styles.splitCell}>
+                                {/* Parte Superior: Ahora muestra el texto descriptivo */}
+                                <View style={styles.upperPart}>
+                                    <Text style={{ fontSize: 6, textAlign: 'center' }}>
+                                        {param.text || '-'}
+                                    </Text>
+                                </View>
+
+                                {/* Parte Inferior: Muestra la etiqueta "Valor" y el número */}
+                                <View style={styles.lowerPart}>
+                                    <Text style={styles.lowerLabel}>Valor</Text>
+                                    <Text style={styles.lowerValue}>{param.val}</Text>
+                                </View>
+                            </View>
+                        ))}
+
+                        {/* HNR */}
+                        <View style={[styles.cell, { width: '8%' }]}>
+                            <Text style={{ fontSize: 8, fontWeight: 'bold' }}>{hnrValue.toFixed(0)}</Text>
+                        </View>
+
+                        {/* Riesgo */}
+                        <View style={[styles.cell, { width: '12%', backgroundColor: getRiskColor(hnrValue) }]}>
+                            <Text style={{ fontSize: 7, fontWeight: 'bold', color: 'black' }}>
                                 {getRiskText(hnrValue)}
                             </Text>
                         </View>
-                        <Text style={[styles.cell, { width: '40%' }]}>{hazard.action}</Text>
+
+                        {/* Acción */}
+                        <View style={[styles.cell, { width: '15%', borderRightWidth: 0, padding: 2, backgroundColor: getRiskColor(hnrValue)  }]}>
+                            <Text style={{ fontSize: 6, color: 'black' }}>{hazard.action || '-'}</Text>
+                        </View>
                     </View>
                 );
             })}
         </View>
     );
 };
-const EnergySection = ({ energies }: { energies: any[] }) => {
-    return (
-        <View style={styles.energyTable}>
-            {/* Título Superior */}
-            <Text style={[styles.headerBlue, { fontSize: 8 }]}>
-                Energías Presentes en la Máquina, Herramienta y/o Equipo:
-            </Text>
 
-            <View style={{ flexDirection: 'row' }}>
-                {energies.map((energy, index) => (
-                    <View key={index} style={[
-                        styles.energyColumn,
-                        index === energies.length - 1 ? { borderRightWidth: 0 } : {}
-                    ]}>
-                        {/* Nombre de Energía */}
-                        <Text style={styles.energyHeader}>{getEnergyLabel(energy.type)}</Text>
-
-                        {/* Icono (Asegúrate de tener estas imágenes en public/icons/) */}
-                        <View style={styles.iconBox}>
-                            <Image
-                                src={`/icons/${energy.type}.png`}
-                                style={{ width: 35, height: 35 }}
-                            />
-                        </View>
-
-                        {/* Selector Si / No */}
-                        <View style={styles.yesNoRow}>
-                            <Text style={styles.yesNoLabel}>Si</Text>
-                            <View style={styles.dotContainer}>
-                                {energy.present && <View style={styles.greenDot} />}
-                            </View>
-                        </View>
-                        <View style={styles.yesNoRow}>
-                            <Text style={styles.yesNoLabel}>No</Text>
-                            <View style={styles.dotContainer}>
-                                {!energy.present && <View style={styles.greenDot} />}
-                            </View>
-                        </View>
-
-                        {/* Requiere Bloqueo */}
-                        <View style={styles.lockRow}>
-                            <Text style={{ fontSize: 6 }}>Req. Bloqueo</Text>
-                            <Text style={{ fontWeight: 'bold' }}>
-                                {energy.requiresLockout ? 'S' : 'N'}
-                            </Text>
-                        </View>
-                    </View>
-                ))}
-            </View>
-        </View>
-    );
-};
-export const RiskPdfDocument = ({ data, totalHNR }: { data: any, totalHNR: number }) => (
+export const RiskPdfDocument = ({ data }: { data: any }) => (
     <Document title={`Analisis_HRN_${data.machineName}`}>
         <Page size="A4" style={styles.page}>
             <View style={styles.infoTable}>
-                {/* Encabezado Principal */}
                 <Text style={styles.headerBlue}>Análisis de Riesgo de Maquinaria y Equipo</Text>
                 <Text style={[styles.headerBlue, { fontSize: 9 }]}>Método HRN</Text>
-
-                {/* Fila 1: Máquina y Ubicación */}
                 <View style={styles.infoRow}>
-                    <View style={[styles.infoCell, { width: '70%' }]}>
-                        <Text style={styles.label}>Máquina, Herramienta y/o Equipo:</Text>
-                        <Text style={styles.value}>{data.machineName || '-'}</Text>
-                    </View>
-                    <View style={[styles.infoCell, { width: '30%', borderRightWidth: 0 }]}>
-                        <Text style={styles.label}>Ubicación:</Text>
-                        <Text style={styles.value}>{data.location || '-'}</Text>
-                    </View>
+                    <View style={[styles.infoCell, { width: '70%' }]}><Text style={styles.label}>Máquina:</Text><Text style={styles.value}>{data.machineName || '-'}</Text></View>
+                    <View style={[styles.infoCell, { width: '30%', borderRightWidth: 0 }]}><Text style={styles.label}>Ubicación:</Text><Text style={styles.value}>{data.location || '-'}</Text></View>
                 </View>
-
-                {/* Fila 2: Serie, Lugar y Fecha */}
                 <View style={[styles.infoRow, { borderBottomWidth: 0 }]}>
-                    <View style={[styles.infoCell, { width: '45%' }]}>
-                        <Text style={styles.label}>Número de Serie y/o Modelo:</Text>
-                        <Text style={styles.value}>{data.serieModel || '-'}</Text>
-                    </View>
-                    <View style={[styles.infoCell, { width: '40%' }]}>
-                        <Text style={styles.label}>Lugar de Evaluación:</Text>
-                        <Text style={styles.value}>{data.evaluationLocation || '-'}</Text>
-                    </View>
-                    <View style={[styles.infoCell, { width: '15%', borderRightWidth: 0 }]}>
-                        <Text style={styles.label}>Fecha:</Text>
-                        <Text style={styles.value}>{data.date || '-'}</Text>
-                    </View>
+                    <View style={[styles.infoCell, { width: '45%' }]}><Text style={styles.label}>Serie/Modelo:</Text><Text style={styles.value}>{data.serieModel || '-'}</Text></View>
+                    <View style={[styles.infoCell, { width: '40%' }]}><Text style={styles.label}>Lugar:</Text><Text style={styles.value}>{data.evaluationLocation || '-'}</Text></View>
+                    <View style={[styles.infoCell, { width: '15%', borderRightWidth: 0 }]}><Text style={styles.label}>Fecha:</Text><Text style={styles.value}>{data.date || '-'}</Text></View>
                 </View>
             </View>
-
-            {/* Info Máquina */}
             <View style={styles.imageContainer}>
-                {data.machineImage && (
-                    <Image
-                        src={data.machineImage}
-                        style={styles.image}
-                    />
-                )}
+                {data.machineImage && <Image src={data.machineImage} style={styles.image} />}
             </View>
-            {/* Energías */}
             <EnergySection energies={data.energies} />
             <HazardTable hazards={data.hazards} />
         </Page>
