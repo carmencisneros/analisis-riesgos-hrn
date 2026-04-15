@@ -45,14 +45,23 @@ const styles = StyleSheet.create({
 
     // --- ESTILOS IMAGEN ---
     imageContainer: {
-        marginTop: 5,
-        marginBottom: 5,
-        alignItems: 'center',
+        marginTop: 10,
+        marginBottom: 10,
+        alignItems: 'center', // Centrado horizontal
+        justifyContent: 'center', // Centrado vertical (si la imagen es más pequeña)
     },
     image: {
-        maxWidth: 400,
-        height: 'auto',
+        // DEFINIR TAMAÑO ESTÁNDAR AQUÍ (en puntos PDF)
+        width: 350,           // Ancho fijo
+        height: 200,          // Alto fijo (crea un rectángulo estándar)
+
+        // LA CLAVE: objectFit cover
+        // Recorta la imagen para llenar el recuadro sin deformarla
+        objectFit: 'cover',
+
         alignSelf: 'center',
+        borderWidth: 1,       // Opcional: un borde fino para delimitar
+        borderColor: '#000',
     },
 
     // --- ESTILOS TABLA ENERGÍAS (DISEÑO DOBLE COLUMNA) ---
@@ -383,7 +392,14 @@ export const RiskPdfDocument = ({ data }: { data: any }) => (
                 </View>
             </View>
             <View style={styles.imageContainer}>
-                {data.machineImage && <Image src={data.machineImage} style={styles.image} />}
+                {data.machineImage && (
+                    <View style={styles.imageContainer}>
+                        <Image
+                            src={data.machineImage}
+                            style={styles.image}
+                        />
+                    </View>
+                )}
             </View>
             <EnergySection energies={data.energies} />
             <HazardTable hazards={data.hazards} />
