@@ -45,15 +45,15 @@ const styles = StyleSheet.create({
 
     // --- ESTILOS IMAGEN ---
     imageContainer: {
-        marginTop: 10,
-        marginBottom: 10,
+        marginTop: 2,
+        marginBottom: 2,
         alignItems: 'center', // Centrado horizontal
         justifyContent: 'center', // Centrado vertical (si la imagen es más pequeña)
     },
     image: {
         // DEFINIR TAMAÑO ESTÁNDAR AQUÍ (en puntos PDF)
-        width: 350,           // Ancho fijo
-        height: 200,          // Alto fijo (crea un rectángulo estándar)
+        width: 400,           // Ancho fijo
+        height: 300,          // Alto fijo (crea un rectángulo estándar)
 
         // LA CLAVE: objectFit cover
         // Recorta la imagen para llenar el recuadro sin deformarla
