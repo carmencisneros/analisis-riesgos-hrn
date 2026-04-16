@@ -97,41 +97,51 @@ function getRiskLevel(hnr: number): { level: string; levelEs: string; color: str
 
 // Frequency Options
 const frequencyOptions = [
-  { value: 1, label: 'Rara vez', description: 'Una vez al año o menos' },
-  { value: 2, label: 'Ocasional', description: 'Mensualmente' },
-  { value: 3, label: 'Frecuente', description: 'Semanalmente' },
-  { value: 4, label: 'Varias veces/día', description: 'Múltiples veces al día' },
-  { value: 5, label: 'Constante', description: 'Exposición continua' },
+  { id:1, value: 0.1, label: 'Infrecuente', description: 'Infrecuente' },
+  { id:2, value: 0.2, label: 'Anualmente', description: 'Anualmente' },
+  { id:3, value: 1.0, label: 'Mensualmente', description: 'Mensualmente' },
+  { id:4, value: 1.5, label: 'Semanalmente', description: 'Semanalmente' },
+  { id:5, value: 2.5, label: 'Diariamente', description: 'Diariamente' },
+  { id:6, value: 4.0, label: 'Varias veces al día', description: 'Varias veces al día' },
+  { id:7, value: 5, label: 'Constante', description: 'Constante' },
 ]
 
 // Severity Options
 const severityOptions = [
-  { value: 0.1, label: 'Rasguño', description: 'Lesión superficial mínima' },
-  { value: 0.5, label: 'Laceración', description: 'Corte o herida leve' },
-  { value: 1, label: 'Fractura menor', description: 'Hueso pequeño' },
-  { value: 2, label: 'Fractura mayor', description: 'Hueso grande' },
-  { value: 4, label: 'Pérdida miembro', description: 'Amputación' },
-  { value: 8, label: 'Muerte', description: 'Fatal' },
+  { id:1, value: 0.1, label: 'Rasguño o astilladuras', description: 'Rasguño o astilladuras' },
+  { id:2, value: 0.5, label: 'Laceración', description: 'Laceración' },
+  { id:3, value: 0.5, label: 'Efecto leve a la salud', description: 'Efecto leve a la salud' },
+  { id:4, value: 1.0, label: 'Fractura de hueso menor', description: 'Fractura de hueso menor' },
+  { id:5, value: 1.0, label: 'Enfermedad menor temporal', description: 'Enfermedad menor temporal' },
+  { id:6, value: 2.0, label: 'Fractura de hueso mayor', description: 'Fractura de hueso mayor' },
+  { id:7, value: 2.0, label: 'Enfermedad menor permanente', description: 'Enfermedad menor permanente' },
+  { id:8, value: 4, label: 'Pérdida de algun miembro', description: 'Pérdida de algun miembro' },
+  { id:9, value: 4, label: 'Enfermedad temporal seria', description: 'Enfermedad temporal seria' },
+  { id:10, value: 8, label: 'Pérdida de un ojo', description: 'Pérdida de un ojo' },
+  { id:11, value: 8, label: 'Enfermedad seria permanente', description: 'Enfermedad seria permanente' },
+  { id:12, value: 15, label: 'Fatalidad', description: 'Fatalidad' },
 ]
 
 // Number of Persons Options
 const personsOptions = [
-  { value: 1, label: '1 a 2', description: '1-2 personas' },
-  { value: 2, label: '3 a 7', description: '3-7 personas' },
-  { value: 4, label: '8 a 15', description: '8-15 personas' },
-  { value: 8, label: '16 a 50', description: '16-50 personas' },
-  { value: 12, label: '50+', description: 'Más de 50' },
+  { id:1, value: 1.0, label: '1 a 2', description: '1 a 2' },
+  { id:2, value: 2.0, label: '3 a 7', description: '3 a 7' },
+  { id:3, value: 4.0, label: '8 a 15', description: '8 a 15' },
+  { id:4, value: 8, label: '16 a 50', description: '16 a 50' },
+  { id:5, value: 12, label: '51', description: '51' },
 ]
 
 // Probability Options
 const probabilityOptions = [
-  { value: 0.1, label: 'Casi imposible', description: '<0.01%' },
-  { value: 1, label: 'Muy improbable', description: '0.01-0.1%' },
-  { value: 2, label: 'Posible', description: '0.1-1%' },
-  { value: 5, label: 'Algo probable', description: '1-10%' },
-  { value: 8, label: 'Probable no sorprende', description: '10-50%' },
-  { value: 10, label: 'Probable', description: '>50%' },
-  { value: 15, label: 'Muy probable', description: '>90%' },
+  { id:1, value: 0.0, label: 'Imposible', description: 'Imposible' },
+  { id:2, value: 0.1, label: 'Casi Imposible', description: 'Casi Imposible' },
+  { id:3, value: 0.5, label: 'Altamente probable', description: 'Altamente probable' },
+  { id:4, value: 1.0, label: 'Probable', description: 'Probable' },
+  { id:5, value: 2.0, label: 'Posible', description: 'Posible' },
+  { id:6, value: 5.0, label: 'Alguna probabilidad', description: 'Alguna probabilidad' },
+  { id:7, value: 8, label: 'Probable no sorprende', description: 'Probable no sorprende' },
+  { id:8, value: 10, label: 'Muy probable', description: 'Muy probable' },
+  { id:9, value: 15, label: 'Certero', description: 'Certero' },
 ]
 
 const originOptionsByHazard: Record<HazardType, string[]> = {
@@ -172,41 +182,44 @@ const originOptionsByHazard: Record<HazardType, string[]> = {
 };
 
 interface SegmentedControlProps {
-  options: { value: number; label: string; description: string }[]
+  options: { id: number; value: number; label: string; description: string }[] // Añadido id
   value: number
   onChange: (value: number) => void
   label: string
 }
-
 function SegmentedControl({ options, value, onChange, label }: SegmentedControlProps) {
+  // Encontramos la opción actual basándonos en el valor guardado
+  const selectedOption = options.find(o => o.value === value);
+
   return (
-    <div className="flex flex-col gap-2">
-      <Label className="text-sm font-medium">{label}</Label>
-      <div className="flex flex-wrap gap-2">
-        {options.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => onChange(option.value)}
-            className={cn(
-              'flex flex-col items-center justify-center rounded-lg px-3 py-2 text-xs transition-all min-w-[80px]',
-              'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
-              value === option.value
-                ? 'bg-primary text-primary-foreground shadow-md'
-                : 'bg-card text-foreground border border-border hover:bg-accent'
-            )}
-          >
-            <span className="font-semibold">{option.label}</span>
-            <span className={cn(
-              'text-[10px] mt-0.5',
-              value === option.value ? 'text-primary-foreground/80' : 'text-muted-foreground'
-            )}>
+      <div className="flex flex-col gap-2">
+        <Label className="text-sm font-medium">{label}</Label>
+        <div className="flex flex-wrap gap-2">
+          {options.map((option) => (
+              <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => onChange(option.value)}
+                  className={cn(
+                      'flex flex-col items-center justify-center rounded-lg px-3 py-2 text-xs transition-all min-w-[80px]',
+                      'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
+                      // COMPARACIÓN POR ID: Si el valor actual coincide con este ID, se marca como activo
+                      selectedOption?.id === option.id
+                          ? 'bg-primary text-primary-foreground shadow-md'
+                          : 'bg-card text-foreground border border-border hover:bg-accent'
+                  )}
+              >
+                <span className="font-semibold">{option.label}</span>
+                <span className={cn(
+                    'text-[10px] mt-0.5',
+                    selectedOption?.id === option.id ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                )}>
               ({option.value})
             </span>
-          </button>
-        ))}
+              </button>
+          ))}
+        </div>
       </div>
-    </div>
   )
 }
 
