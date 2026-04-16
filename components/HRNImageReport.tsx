@@ -99,7 +99,7 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
             </div>
 
             {/* --- PELIGROS --- */}
-            <div className="border-[0.5px] border-black">
+            <div className="border-[1px] border-black">
                 <div className="bg-[#004a7c] text-white text-center py-1 font-bold text-[10px] border-b-[0.5px] border-black">
                     Identificación de Peligros y Evaluación de Riesgos
                 </div>
@@ -141,19 +141,22 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                                 { val: hazard.numberOfPersons, label: hazard.personsLabel },
                                 { val: hazard.probability, label: hazard.probabilityLabel }
                             ].map((param, i) => (
-                                <div key={i} className="border-r-[0.5px] border-black flex flex-col h-full">
+                                <div key={i} className="border-r border-black flex flex-col h-full bg-white overflow-hidden">
                                     {/* Parte Superior: Descripción */}
-                                    <div className="flex-1 flex items-center justify-center p-1 text-[10px] leading-tight">
+                                    <div className="flex-1 flex items-center justify-center p-1 text-[10px] leading-tight text-center">
                                         {param.label || '-'}
                                     </div>
 
                                     {/* Parte Inferior: "Valor" y Número */}
-                                    {/* Agregamos border-t-[0.5px] explícito y eliminamos h-4 para usar padding consistente */}
-                                    <div className="grid grid-cols-2 border-t-[0.5px] border-black text-[10px] min-h-[16px]">
-                                        <div className="bg-gray-100 border-r-[0.5px] border-black flex items-center justify-center font-medium">
+                                    {/* Agregamos una clase de utilidad para forzar el borde superior siempre */}
+                                    <div
+                                        className="flex w-full text-[10px] h-[18px] shrink-0"
+                                        style={{ borderTop: '1px solid black' }} // Inline style para máxima prioridad
+                                    >
+                                        <div className="w-1/2 bg-gray-100 border-r border-black flex items-center justify-center font-medium">
                                             Valor
                                         </div>
-                                        <div className="font-bold flex items-center justify-center">
+                                        <div className="w-1/2 font-bold flex items-center justify-center">
                                             {param.val}
                                         </div>
                                     </div>
