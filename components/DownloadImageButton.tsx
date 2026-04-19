@@ -64,11 +64,11 @@ export function DownloadImageButton({ formData }: { formData: any }) {
                 className="bg-green-600 hover:bg-green-700"
             >
                 {isGenerating ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    <Loader2 className="h-4 w-4 animate-spin mr-1" />
                 ) : (
-                    <FileImage className="h-4 w-4 mr-2" />
+                    <FileImage className="h-4 w-4 mr-1" />
                 )}
-                {isGenerating ? "Generando Imagen..." : "Exportar Imagen"}
+                {isGenerating ? "Generando..." : "Descargar"}
             </Button>
 
             {/* COMPONENTE OCULTO (fuera de la pantalla) PARA LA CAPTURA */}
