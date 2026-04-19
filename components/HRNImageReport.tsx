@@ -25,7 +25,7 @@ const getRiskText = (hnr: number) => {
 
 export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: React.Ref<HTMLDivElement>) => {
     if (!data) return null;
-
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
     return (
         <div ref={ref} className="w-[1000px] bg-white p-1 font-sans text-[11px] leading-tight text-black">
             {/* --- INFO MÁQUINA --- */}
@@ -82,7 +82,7 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                                 {/* Columna Izquierda (Icono) - Ancho 50% */}
                                 <div className="w-1/2 flex items-center justify-center border-r-[2px] border-black bg-white">
                                     <img
-                                        src={`/icons/${energy.type}.png`}
+                                        src={`${baseUrl}/icons/${energy.type}.png`}
                                         className="w-10 h-10"
                                         alt=""
                                         crossOrigin="anonymous"
@@ -158,7 +158,7 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                                     {getHazardLabel(hazard.type)}
                                 </div>
                                 <div className="flex-1 flex items-center justify-center p-1">
-                                    <img src={`/icons/${hazard.type}.png`} className="w-10 h-10" alt="" />
+                                    <img src={`${baseUrl}/icons/${hazard.type}.png`} className="w-10 h-10" alt="" />
                                 </div>
                             </div>
 
