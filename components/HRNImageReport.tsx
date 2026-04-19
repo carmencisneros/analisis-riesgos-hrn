@@ -148,7 +148,7 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                 </div>
 
                 {data.hazards?.map((hazard: any, index: number) => {
-                    const hnr = (Number(hazard.frequency) || 0) * (Number(hazard.severity) || 0) * (Number(hazard.numberOfPersons) || 0) * (Number(hazard.probability) || 0);
+                    const hnr = (parseFloat(hazard.frequency) || 0) * (parseFloat(hazard.severity) || 0) * (parseFloat(hazard.numberOfPersons) || 0) * (parseFloat(hazard.probability) || 0);
                     const isEvaluated = hnr > 0;
                     return (
                         <div key={index} className="grid grid-cols-[12%_13%_10%_10%_10%_10%_8%_12%_15%] text-center border-b-[2px] border-black last:border-b-0 min-h-[60px]">
@@ -196,7 +196,7 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                             ))}
 
                             <div className="flex items-center justify-center font-bold text-[10px] border-r-[2px] border-black">
-                                {hnr.toFixed(0)}
+                                {hnr > 0 && hnr < 1 ? hnr.toFixed(1) : hnr.toFixed(0)}
                             </div>
 
                             {/* Celda de Riesgo Condicionada */}
