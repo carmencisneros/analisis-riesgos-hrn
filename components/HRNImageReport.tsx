@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useEffect } from 'react'
 import { getHazardLabel } from '@/components/hazard-accordion';
 import { getEnergyLabel } from '@/components/energy-card';
 
@@ -25,7 +26,12 @@ const getRiskText = (hnr: number) => {
 
 export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: React.Ref<HTMLDivElement>) => {
     if (!data) return null;
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const [isClient, setIsClient] = useState(false)
+    useEffect(() => {
+        setIsClient(true)
+    }, [])
+    if (!isClient) return null
+    const baseUrl = window.location.origin
     return (
         <div ref={ref} className="w-[1000px] bg-white p-1 font-sans text-[11px] leading-tight text-black">
             {/* --- INFO MÁQUINA --- */}

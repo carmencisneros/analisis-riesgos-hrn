@@ -182,15 +182,12 @@ const originOptionsByHazard: Record<HazardType, string[]> = {
 };
 
 interface SegmentedControlProps {
-  options: { id: number; value: number; label: string; description: string }[] // Añadido id
-  value: number
-  onChange: (value: number) => void
+  options: { id: number; value: number; label: string; description: string }[]
+  selectedId: number | undefined // Cambiamos value por selectedId
+  onChange: (id: number) => void
   label: string
 }
-function SegmentedControl({ options, value, onChange, label }: SegmentedControlProps) {
-  // Encontramos la opción actual basándonos en el valor guardado
-  const selectedOption = options.find(o => o.value === value);
-
+function SegmentedControl({ options, selectedId, onChange, label }: SegmentedControlProps) {
   return (
       <div className="flex flex-col gap-2">
         <Label className="text-sm font-medium">{label}</Label>
@@ -199,12 +196,12 @@ function SegmentedControl({ options, value, onChange, label }: SegmentedControlP
               <button
                   key={option.id}
                   type="button"
-                  onClick={() => onChange(option.value)}
+                  onClick={() => onChange(option.id)}
                   className={cn(
                       'flex flex-col items-center justify-center rounded-lg px-3 py-2 text-xs transition-all min-w-[80px]',
                       'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
-                      // COMPARACIÓN POR ID: Si el valor actual coincide con este ID, se marca como activo
-                      selectedOption?.id === option.id
+                      // COMPROBACIÓN POR ID: Esto evita el duplicado visual
+                      selectedId === option.id
                           ? 'bg-primary text-primary-foreground shadow-md'
                           : 'bg-card text-foreground border border-border hover:bg-accent'
                   )}
@@ -212,7 +209,7 @@ function SegmentedControl({ options, value, onChange, label }: SegmentedControlP
                 <span className="font-semibold">{option.label}</span>
                 <span className={cn(
                     'text-[10px] mt-0.5',
-                    selectedOption?.id === option.id ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                    selectedId === option.id ? 'text-primary-foreground/80' : 'text-muted-foreground'
                 )}>
               ({option.value})
             </span>
@@ -235,15 +232,22 @@ function HazardForm({ data, onChange }: HazardFormProps) {
   const handleParamChange = (
       field: keyof HazardData,
       labelField: keyof HazardData,
-      value: number,
-      options: { value: number; label: string }[]
+      optionId: number, // Recibimos el ID
+      options: { id: number; value: number; label: string }[]
   ) => {
-    const selectedOption = options.find(o => o.value === value);
-    onChange({
-      ...data,
-      [field]: value,
-      [labelField]: selectedOption?.label || ''
-    });
+    // Buscamos la opción por su ID único
+    const selectedOption = options.find(o => o.id === optionId);
+
+    if (selectedOption) {
+      onChange({
+        ...data,
+        [field]: selectedOption.value, // Guardamos el valor numérico (0.5)
+        [labelField]: selectedOption.label // Guardamos el texto ("Laceración")
+      });
+    }
+  };
+  const getSelectedId = (options: any[], currentLabel: string | undefined) => {
+    return options.find(o => o.label === currentLabel)?.id;
   };
   const currentOriginOptions = originOptionsByHazard[data.type] || ["No Identificado"];
   return (
@@ -276,31 +280,32 @@ function HazardForm({ data, onChange }: HazardFormProps) {
         <h4 className="text-sm font-semibold text-foreground">Parámetros HNR</h4>
 
         <SegmentedControl
-            label="Frecuencia de Exposición"
+            label="Frecuencia"
             options={frequencyOptions}
-            value={data.frequency}
-            onChange={(val) => handleParamChange('frequency', 'frequencyLabel', val, frequencyOptions)}
+            selectedId={getSelectedId(frequencyOptions, data.frequencyLabel)}
+            onChange={(id) => handleParamChange('frequency', 'frequencyLabel', id, frequencyOptions)}
         />
 
         <SegmentedControl
-            label="Severidad de la Lesión"
+            label="Severidad"
             options={severityOptions}
-            value={data.severity}
-            onChange={(val) => handleParamChange('severity', 'severityLabel', val, severityOptions)}
+            selectedId={getSelectedId(severityOptions, data.severityLabel)}
+            onChange={(id) => handleParamChange('severity', 'severityLabel', id, severityOptions)}
         />
 
+        {/* Repetir lo mismo para Número de Personas y Probabilidad */}
         <SegmentedControl
             label="Número de Personas"
             options={personsOptions}
-            value={data.numberOfPersons}
-            onChange={(val) => handleParamChange('numberOfPersons', 'personsLabel', val, personsOptions)}
+            selectedId={getSelectedId(personsOptions, data.personsLabel)}
+            onChange={(id) => handleParamChange('numberOfPersons', 'personsLabel', id, personsOptions)}
         />
 
         <SegmentedControl
             label="Probabilidad"
             options={probabilityOptions}
-            value={data.probability}
-            onChange={(val) => handleParamChange('probability', 'probabilityLabel', val, probabilityOptions)}
+            selectedId={getSelectedId(probabilityOptions, data.probabilityLabel)}
+            onChange={(id) => handleParamChange('probability', 'probabilityLabel', id, probabilityOptions)}
         />
       </div>
 
