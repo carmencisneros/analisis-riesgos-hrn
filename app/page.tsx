@@ -352,7 +352,7 @@ export default function HNRRiskAnalysisPage() {
           />
         </section>
 
-        {/* Summary Footer */}
+        {/* Summary Footer
         <section className="rounded-xl border-2 border-primary/20 bg-primary/5 p-6">
           <h3 className="text-sm font-semibold text-foreground mb-4">
             Resumen de la Evaluación
@@ -407,7 +407,7 @@ export default function HNRRiskAnalysisPage() {
               <span>Muy Bajo (0-5): No son necesarias medias adicionales a las actuales.</span>
             </div>
           </div>
-        </section>
+        </section>*/}
       </main>
 
       {/* Bottom Spacing for Mobile */}

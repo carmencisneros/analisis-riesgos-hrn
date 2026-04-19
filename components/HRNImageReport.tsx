@@ -65,33 +65,64 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
             )}
 
             {/* --- ENERGÍAS --- */}
-            <div className="border-[0.5px] border-black mb-2">
-                <div className="bg-[#004a7c] text-white text-center py-1 font-bold text-[10px] border-b-[0.5px] border-black uppercase">
+            <div className="border-[1px] border-black mb-2 bg-white">
+                <div className="bg-[#004a7c] text-white text-center py-1 font-bold text-[14px] border-b-[1px] border-black">
                     Energías Presentes en la Máquina, Herramienta y/o Equipo
                 </div>
                 <div className="flex">
                     {data.energies?.map((energy: any, i: number) => (
-                        <div key={i} className="flex-1 border-r-[0.5px] border-black last:border-r-0">
-                            <div className="bg-[#004a7c] text-white text-center py-0.5 text-[10px] border-b-[0.5px] border-black">
+                        <div key={i} className="flex-1 border-r-[1px] border-black last:border-r-0 flex flex-col">
+                            {/* Encabezado */}
+                            <div className="bg-[#004a7c] text-white text-center py-0.5 text-[10px] border-b-[1px] border-black">
                                 {getEnergyLabel(energy.type)}
                             </div>
-                            <div className="flex h-16 border-b-[0.5px] border-black">
-                                <div className="w-1/2 flex items-center justify-center border-r-[0.5px] border-black">
-                                    <img src={`/icons/${energy.type}.png`} className="w-10 h-10" alt="" />
+
+                            {/* Bloque Central */}
+                            <div className="flex h-16 border-b-[1px] border-black">
+                                {/* Columna Izquierda (Icono) - Ancho 50% */}
+                                <div className="w-1/2 flex items-center justify-center border-r-[1px] border-black bg-white">
+                                    <img
+                                        src={`/icons/${energy.type}.png`}
+                                        className="w-10 h-10"
+                                        alt=""
+                                        crossOrigin="anonymous"
+                                    />
                                 </div>
+
+                                {/* Columna Derecha (Estado) - Ancho 50% */}
                                 <div className="w-1/2 flex flex-col text-[10px]">
-                                    <div className="bg-[#004a7c] text-white text-center p-0.5">Presente</div>
-                                    <div className="flex-1 flex items-center justify-between px-2 border-b-[0.5px] border-black">
-                                        <span>Si</span> {energy.present && <div className="w-2 h-2 bg-green-500 rounded-full" />}
+                                    <div className="bg-[#004a7c] text-white text-center p-0.5 border-b-[1px] border-black">
+                                        Presente
                                     </div>
-                                    <div className="flex-1 flex items-center justify-between px-2">
-                                        <span>No</span> {!energy.present && <div className="w-2 h-2 bg-green-500 rounded-full" />}
+                                    {/* Fila SI */}
+                                    <div className="flex-1 flex items-center border-b-[1px] border-black">
+                                        {/* Texto Si - Ancho 60% de la columna derecha (30% del total) */}
+                                        <div className="w-3/5 border-r-[1px] border-black h-full flex items-center justify-center">Si</div>
+                                        {/* Círculo - Ancho 40% de la columna derecha (20% del total) */}
+                                        <div className="w-2/5 flex items-center justify-center h-full">
+                                            {energy.present && <div className="w-2.5 h-2.5 bg-green-500 rounded-full" />}
+                                        </div>
+                                    </div>
+                                    {/* Fila NO */}
+                                    <div className="flex-1 flex items-center">
+                                        <div className="w-3/5 border-r-[1px] border-black h-full flex items-center justify-center">No</div>
+                                        <div className="w-2/5 flex items-center justify-center h-full">
+                                            {!energy.present && <div className="w-2.5 h-2.5 bg-green-500 rounded-full" />}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex justify-between px-1.5 py-1 text-[10px] font-bold">
-                                <span>Requiere bloqueo</span>
-                                <span>{energy.requiresLockout ? 'S' : 'N'}</span>
+
+                            {/* Footer: Requiere Bloqueo ALINEADO --- */}
+                            <div className="flex items-center text-[10px] font-bold h-6">
+                                {/* Etiqueta - Debe sumar el ancho del Icono + Texto "Si/No" (50% + 30% = 80%) */}
+                                <div className="w-[80%] border-r-[1px] border-black h-full flex items-center px-1.5">
+                                    Requiere bloqueo
+                                </div>
+                                {/* Valor (S/N) - Debe ocupar el mismo ancho que el círculo verde (20%) */}
+                                <div className="w-[20%] text-center h-full flex items-center justify-center">
+                                    {energy.requiresLockout ? 'S' : 'N'}
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -100,11 +131,11 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
 
             {/* --- PELIGROS --- */}
             <div className="border-[1px] border-black">
-                <div className="bg-[#004a7c] text-white text-center py-1 font-bold text-[10px] border-b-[0.5px] border-black">
+                <div className="bg-[#004a7c] text-white text-center py-1 font-bold text-[14px] border-b-[0.5px] border-black">
                     Identificación de Peligros y Evaluación de Riesgos
                 </div>
                 {/* Header Peligros */}
-                <div className="grid grid-cols-[12%_13%_10%_10%_10%_10%_8%_12%_15%] bg-[#004a7c] text-white text-center font-bold text-[10px] border-b-[0.5px] border-black">
+                <div className="grid grid-cols-[12%_13%_10%_10%_10%_10%_8%_12%_15%] bg-[#004a7c] text-white text-center font-bold text-[12px] border-b-[0.5px] border-black">
                     <div className="p-1 border-r border-black/30">Tipo</div>
                     <div className="p-1 border-r border-black/30">Origen</div>
                     <div className="p-1 border-r border-black/30">Frecuencia</div>
