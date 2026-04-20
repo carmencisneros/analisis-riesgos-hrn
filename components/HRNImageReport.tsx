@@ -32,6 +32,7 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
     }, [])
     if (!isClient) return null
     const baseUrl = window.location.origin
+    const cacheBuster = "?t=" + Date.now();
     return (
         <div ref={ref} className="w-[1000px] bg-white p-1 font-sans text-[11px] leading-tight text-black">
             {/* --- INFO MÁQUINA --- */}
@@ -65,8 +66,13 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
 
             {/* --- IMAGEN DE LA MÁQUINA --- */}
             {data.machineImage && (
-                <div className="flex justify-center mb-4 border border-black p-2">
-                    <img src={data.machineImage} alt="Máquina" className="max-w-[500px] h-auto object-cover" />
+                <div className="flex justify-center mb-4 border border-black p-2 overflow-hidden">
+                    <img
+                        src={data.machineImage}
+                        alt="Máquina"
+                        className="block w-full h-auto max-w-[500px] object-contain" // Cambiamos object-cover por contain y añadimos block
+                        style={{ WebkitPrintColorAdjust: 'exact' }} // Forzar renderizado en iOS
+                    />
                 </div>
             )}
 
@@ -88,7 +94,7 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                                 {/* Columna Izquierda (Icono) - Ancho 50% */}
                                 <div className="w-1/2 flex items-center justify-center border-r-[2px] border-black bg-white">
                                     <img
-                                        src={`${baseUrl}/icons/${energy.type}.png`}
+                                        src={`${baseUrl}/icons/${energy.type}.png${cacheBuster}`}
                                         className="w-10 h-10"
                                         alt=""
                                         crossOrigin="anonymous"
@@ -164,7 +170,12 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                                     {getHazardLabel(hazard.type)}
                                 </div>
                                 <div className="flex-1 flex items-center justify-center p-1">
-                                    <img src={`${baseUrl}/icons/${hazard.type}.png`} className="w-10 h-10" alt="" />
+                                    <img
+                                        src={`${baseUrl}/icons/${hazard.type}.png${cacheBuster}`}
+                                        className="w-10 h-10"
+                                        alt=""
+                                        crossOrigin="anonymous" // <--- AÑADIR AQUÍ TAMBIÉN
+                                    />
                                 </div>
                             </div>
 
