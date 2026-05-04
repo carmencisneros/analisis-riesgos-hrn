@@ -160,6 +160,7 @@ export default function HNRRiskAnalysisPage() {
                 </div>
               )}
               <DownloadImageButton formData={formData} totalHNR={totalHNR} />
+              <DownloadPdfButton formData={formData} totalHNR={totalHNR} />
               <Button
                 variant="outline" 
                 size="sm" 
