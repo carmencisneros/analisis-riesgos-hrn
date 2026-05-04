@@ -83,15 +83,18 @@ const hazardConfig: Record<HazardType, { label: string; labelEs: string; Icon: L
 
 // HNR Calculation
 function calculateHNR(data: HazardData): number {
-  return data.frequency * data.severity * data.numberOfPersons * data.probability
+  const hnr = (parseFloat(data.frequency) || 0) * (parseFloat(data.severity) || 0) * (parseFloat(data.numberOfPersons) || 0) * (parseFloat(data.probability) || 0);
+  return hnr
 }
 
 // Risk Level Determination
 function getRiskLevel(hnr: number): { level: string; levelEs: string; color: string; bgColor: string } {
-  if (hnr >= 50) return { level: 'High', levelEs: 'Alto', color: 'text-white', bgColor: 'bg-risk-high' }
-  if (hnr >= 20) return { level: 'Medium', levelEs: 'Medio', color: 'text-warning-foreground', bgColor: 'bg-risk-medium' }
-  if (hnr >= 10) return { level: 'Low', levelEs: 'Bajo', color: 'text-white', bgColor: 'bg-risk-low' }
-  if (hnr >= 5) return { level: 'Very Low', levelEs: 'Muy Bajo', color: 'text-white', bgColor: 'bg-risk-very-low' }
+  if (hnr > 1000) return { level: 'Inaceptable', levelEs: 'Inaceptable', color: 'text-white', bgColor: 'bg-risk-high' }
+  if (hnr > 500) return { level: 'Very High', levelEs: 'Muy Alto', color: 'text-white', bgColor: 'bg-risk-high' }
+  if (hnr > 50) return { level: 'High', levelEs: 'Alto', color: 'text-white', bgColor: 'bg-risk-high' }
+  if (hnr > 20) return { level: 'Medium', levelEs: 'Medio', color: 'text-warning-foreground', bgColor: 'bg-risk-medium' }
+  if (hnr > 5) return { level: 'Low', levelEs: 'Bajo', color: 'text-white', bgColor: 'bg-risk-low' }
+  if (hnr <= 5) return { level: 'Very Low', levelEs: 'Despreciable', color: 'text-white', bgColor: 'bg-risk-very-low' }
   return { level: 'Negligible', levelEs: 'Despreciable', color: 'text-white', bgColor: 'bg-risk-negligible' }
 }
 
@@ -397,7 +400,7 @@ export function HazardAccordionList({ hazards, onChange }: HazardAccordionProps)
                 <div className="ml-auto mr-4 flex items-center gap-3">
                   <div className="flex flex-col items-end">
                     <span className="text-xs text-muted-foreground">HNR</span>
-                    <span className="text-lg font-bold text-foreground">{hnr.toFixed(0)}</span>
+                    <span className="text-lg font-bold text-foreground">{hnr}</span>
                   </div>
                   <Badge 
                     className={cn(

@@ -15,16 +15,23 @@ const getRiskColor = (hnr: number) => {
 
 const getRiskText = (hnr: number) => {
     if (hnr > 1000) return 'Inaceptable';
-    if (hnr > 500) return 'Extremo';
-    if (hnr > 50) return 'Muy alto';
-    if (hnr > 20) return 'Alto';
-    if (hnr > 10) return 'Medio';
-    if (hnr > 5) return 'Bajo';
-    if (hnr > 1) return 'Muy bajo';
-    return 'Despreciable';
+    //if (hnr <= 1000) return 'Extremo';
+    if (hnr > 500) return 'Muy Alto';
+    if (hnr >= 51 && hnr <= 500) return 'Alto';
+    if (hnr >= 21 && hnr <= 50) return 'Medio';
+    if (hnr >= 6 && hnr <= 20) return 'Bajo';
+    if (hnr >= 0 && hnr <= 5) return 'Despreciable';
 };
 
 export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: React.Ref<HTMLDivElement>) => {
+    const [isVertical, setIsVertical] = useState(false);
+
+    const handleImageLoad = (e) => {
+        const { naturalWidth, naturalHeight } = e.target;
+        if (naturalHeight > naturalWidth) {
+            setIsVertical(true);
+        }
+    };
     if (!data) return null;
     const [isClient, setIsClient] = useState(false)
     useEffect(() => {
@@ -34,13 +41,13 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
     const baseUrl = window.location.origin
     const cacheBuster = "?t=" + Date.now();
     return (
-        <div ref={ref} className="w-[1000px] bg-white p-1 font-sans text-[11px] leading-tight text-black">
+        <div ref={ref} className="w-[1000px] bg-white p-1 font-sans text-[14px] leading-tight text-black">
             {/* --- INFO MÁQUINA --- */}
             <div className="border-[0.5px] border-black mb-2">
-                <div className="bg-[#004a7c] text-white text-center py-1 font-bold text-[14px] border-b-[0.5px] border-black">
+                <div className="bg-[#004a7c] text-white text-center py-1 font-bold text-[15px] border-b-[0.5px] border-black">
                     Análisis de Riesgo de Maquinaria y Equipo
                 </div>
-                <div className="bg-[#004a7c] text-white text-center py-0.5 font-bold text-[12px] border-b-[0.5px] border-black">
+                <div className="bg-[#004a7c] text-white text-center py-0.5 font-bold text-[15px] border-b-[0.5px] border-black">
                     Método HRN
                 </div>
                 <div className="grid grid-cols-[70%_30%] border-b-[0.5px] border-black">
@@ -70,8 +77,11 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                     <img
                         src={data.machineImage}
                         alt="Máquina"
-                        className="block w-full h-auto max-w-[500px] object-contain" // Cambiamos object-cover por contain y añadimos block
-                        style={{ WebkitPrintColorAdjust: 'exact' }} // Forzar renderizado en iOS
+                        onLoad={handleImageLoad} // <--- Detectar dimensiones al cargar
+                        className={`block h-auto object-contain ${
+                            isVertical ? 'max-w-[250px]' : 'max-w-[450px]'
+                        }`}
+                        style={{ WebkitPrintColorAdjust: 'exact' }}
                     />
                 </div>
             )}
@@ -85,7 +95,7 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                     {data.energies?.map((energy: any, i: number) => (
                         <div key={i} className="flex-1 border-r-[1px] border-black last:border-r-0 flex flex-col">
                             {/* Encabezado */}
-                            <div className="bg-[#004a7c] text-white text-center py-0.5 text-[10px] border-b-[2px] border-black">
+                            <div className="bg-[#004a7c] text-white text-center py-0.5 text-[13px] border-b-[2px] border-black">
                                 {getEnergyLabel(energy.type)}
                             </div>
 
@@ -95,14 +105,14 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                                 <div className="w-1/2 flex items-center justify-center border-r-[2px] border-black bg-white">
                                     <img
                                         src={`${baseUrl}/icons/${energy.type}.png${cacheBuster}`}
-                                        className="w-10 h-10"
+                                        className="w-15 h-15"
                                         alt=""
                                         crossOrigin="anonymous"
                                     />
                                 </div>
 
                                 {/* Columna Derecha (Estado) - Ancho 50% */}
-                                <div className="w-1/2 flex flex-col text-[10px]">
+                                <div className="w-1/2 flex flex-col text-[13px]">
                                     <div className="bg-[#004a7c] text-white text-center p-0.5 border-b-[2px] border-black">
                                         Presente
                                     </div>
@@ -126,7 +136,7 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                             </div>
 
                             {/* Footer: Requiere Bloqueo ALINEADO --- */}
-                            <div className="flex items-center text-[10px] font-bold h-6">
+                            <div className="flex items-center text-[13px] font-bold h-6">
                                 {/* Etiqueta - Debe sumar el ancho del Icono + Texto "Si/No" (50% + 30% = 80%) */}
                                 <div className="w-[80%] border-r-[2px] border-black h-full flex items-center px-1.5">
                                     Requiere bloqueo
@@ -147,7 +157,7 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                     Identificación de Peligros y Evaluación de Riesgos
                 </div>
                 {/* Header Peligros */}
-                <div className="grid grid-cols-[12%_13%_10%_10%_10%_10%_8%_12%_15%] bg-[#004a7c] text-white text-center font-bold text-[12px] border-b-[0.5px] border-black">
+                <div className="grid grid-cols-[12%_13%_10%_10%_10%_10%_8%_12%_15%] bg-[#004a7c] text-white text-center font-bold text-[13px] border-b-[0.5px] border-black">
                     <div className="p-1 border-r border-black/30">Tipo</div>
                     <div className="p-1 border-r border-black/30">Origen</div>
                     <div className="p-1 border-r border-black/30">Frecuencia</div>
@@ -166,20 +176,20 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                         <div key={index} className="grid grid-cols-[12%_13%_10%_10%_10%_10%_8%_12%_15%] text-center border-b-[2px] border-black last:border-b-0 min-h-[60px]">
                             {/* Celda Tipo con Título Azul */}
                             <div className="border-r-[2px] border-black flex flex-col">
-                                <div className="bg-[#004a7c] text-white text-[10px] p-0.5 font-bold mb-auto">
+                                <div className="bg-[#004a7c] text-white text-[13px] p-0.5 font-bold mb-auto">
                                     {getHazardLabel(hazard.type)}
                                 </div>
                                 <div className="flex-1 flex items-center justify-center p-1">
                                     <img
                                         src={`${baseUrl}/icons/${hazard.type}.png${cacheBuster}`}
-                                        className="w-10 h-10"
+                                        className="w-15 h-15"
                                         alt=""
                                         crossOrigin="anonymous" // <--- AÑADIR AQUÍ TAMBIÉN
                                     />
                                 </div>
                             </div>
 
-                            <div className="p-1 border-r-[2px] border-black flex items-center justify-center text-[10px]">
+                            <div className="p-1 border-r-[2px] border-black flex items-center justify-center text-[13px]">
                                 {hazard.origin || '-'}
                             </div>
 
@@ -192,14 +202,14 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                             ].map((param, i) => (
                                 <div key={i} className="border-r border-black flex flex-col h-full bg-white overflow-hidden">
                                     {/* Parte Superior: Descripción */}
-                                    <div className="flex-1 flex items-center justify-center p-1 text-[10px] leading-tight text-center">
+                                    <div className="flex-1 flex items-center justify-center p-1 text-[13px] leading-tight text-center">
                                         {param.label || '-'}
                                     </div>
 
                                     {/* Parte Inferior: "Valor" y Número */}
                                     {/* Agregamos una clase de utilidad para forzar el borde superior siempre */}
                                     <div
-                                        className="flex w-full text-[10px] h-[18px] shrink-0"
+                                        className="flex w-full text-[13px] h-[18px] shrink-0"
                                         style={{ borderTop: '1px solid black' }} // Inline style para máxima prioridad
                                     >
                                         <div className="w-1/2 bg-gray-100 border-r border-black flex items-center justify-center font-medium">
@@ -212,18 +222,18 @@ export const HRNImageReport = React.forwardRef(({ data }: { data: any }, ref: Re
                                 </div>
                             ))}
 
-                            <div className="flex items-center justify-center font-bold text-[10px] border-r-[2px] border-black">
+                            <div className="flex items-center justify-center font-bold text-[13px] border-r-[2px] border-black">
                                 {hnr > 0 && hnr < 1 ? hnr.toFixed(1) : hnr.toFixed(0)}
                             </div>
 
                             {/* Celda de Riesgo Condicionada */}
-                            <div className="flex items-center justify-center font-bold text-[10px] border-r-[2px] border-black"
+                            <div className="flex items-center justify-center font-bold text-[13px] border-r-[2px] border-black"
                                  style={{ backgroundColor: isEvaluated ? getRiskColor(hnr) : 'transparent' }}>
                                 {isEvaluated ? getRiskText(hnr) : ''}
                             </div>
 
                             {/* Celda de Acción Condicionada */}
-                            <div className="p-1 flex items-center justify-center text-[10px]"
+                            <div className="p-1 flex items-center justify-center text-[13px]"
                                  style={{ backgroundColor: isEvaluated ? getRiskColor(hnr) : 'transparent' }}>
                                 {hazard.action || '-'}
                             </div>
