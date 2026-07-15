@@ -16,7 +16,7 @@ import {
   CheckCircle2,
   Factory,
   Camera, // Added Camera icon
-  Trash2 // Added Trash2 icon
+  Trash2 // Added Trash2 icon test
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
